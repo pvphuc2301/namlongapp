@@ -19,10 +19,10 @@ const hpp = require('hpp');
 const mongoSanitize = require('express-mongo-sanitize');
 const cors = require('cors');
 const cookieParser = require("cookie-parser");
-const path = require('path');
+const corsOptions = require('./config/corsOptions');
 const app = express();
 
-app.use(cors());
+app.use(cors(corsOptions));
 // 1. GLOBAL MIDDLEWARES
 // Set security HTTP headers
 app.use(helmet());
@@ -68,15 +68,6 @@ app.use('/api/v1/soldCartItems', soldItemRouter);
 app.use('/api/v1/auth', authRouter);
 app.use('/api/v1/customers', customerRouter);
 app.use('/api/v1/transactions', transactionRouter);
-
-if (process.env.NODE_ENV === 'production') {
-    app.use(express.static(path.join(__dirname, '../frontend/build')));
-    app.get('*', (req, res) => {
-        res.sendFile(path.resolve(__dirname, 'frontend', 'build', 'index.html'));
-    });
-} else {
-
-}
 
 app.all('*', (req, res, next) => {
     next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404));

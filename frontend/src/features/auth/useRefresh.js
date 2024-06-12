@@ -1,7 +1,7 @@
 import { useMutation } from "react-query";
 import { useDispatch } from "react-redux";
 import { setCredentials } from "../../redux/slices/authSlice";
-import axios from "axios";
+import axios from "../../api/axios";
 
 const useRefresh = () => {
     const dispatch = useDispatch();
