@@ -45,8 +45,13 @@ const Navbar = () => {
 
             <div style={{ flexGrow: 1, textAlign: 'right', position: 'relative' }}>
                 <i className="bi bi-bell-fill"></i>
-                <Link to={'/me'}><img style={{ height: 20, borderRadius: '50%' }} src={`/img/users/${userInfo?.user?.photo}`} /></Link>
-
+                <Link to={'/me'}>
+                    {
+                        userInfo?.user?.photo
+                            ? <img style={{ height: 20, borderRadius: '50%' }} src={`/img/users/${userInfo?.user?.photo}`} />
+                            : <i className="bi bi-person-fill"></i>
+                    }
+                </Link>
                 {/* <Button type='button' onClick={() => setShowDropdown(!showDropdown)}>
                     <img style={{ height: 20, borderRadius: '50%' }} src={`/img/users/${userInfo?.user?.photo}`} />
                 </Button> */}
@@ -55,7 +60,7 @@ const Navbar = () => {
                         <div ref={dropdownRef} style={{ position: 'absolute', right: 10, top: '2.5rem', backgroundColor: 'white', padding: 8, borderRadius: 4, boxShadow: '0 4px 12px rgb(0 0 0 / 15%)' }}
                         >
                             <div>
-                                <img style={{ height: 32, margin: 16 }} src="https://gw.alipayobjects.com/zos/rmsportal/KDpgvguMpGfqaHPjicRK.svg" alt="logo" />
+                                <img style={{ height: 32, margin: 16 }} alt="logo" />
                                 <strong>{userInfo?.user?.name}</strong>
                                 <div>{userInfo?.user?.email}</div>
                                 <Button type='button'>Đăng xuất</Button>

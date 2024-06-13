@@ -25,7 +25,7 @@ const PersistLogin = () => {
         if (!token && persistedToken) {
             console.log('refresh token');
             refresh(
-
+                undefined,
                 {
                     onSuccess: () => setTrueSuccess(true),
                     onError: () => setTrueSuccess(false),
