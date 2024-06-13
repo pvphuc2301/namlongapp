@@ -13,12 +13,18 @@ const PersistLogin = () => {
 
     const [trueSuccess, setTrueSuccess] = useState(false);
 
-    const { refresh, isLoading, isSuccess, isError, error } = useRefresh();
+    const { refresh, isLoading, isSuccess, isError, error, isIdle } = useRefresh();
 
     useEffect(() => {
         if (effectRan.current === true || process.env.NODE_ENV !== 'production') {
 
-            if (!token && persistedToken) refresh(
+        }
+
+        console.log('persisted token', persistedToken);
+        console.log('token', token);
+        if (!token && persistedToken) {
+            console.log('refresh token');
+            refresh(
 
                 {
                     onSuccess: () => setTrueSuccess(true),
@@ -46,7 +52,7 @@ const PersistLogin = () => {
     } else if (isSuccess && trueSuccess) { // persistence and token
         console.log('success');
         content = <Outlet />
-    } else {
+    } else if (token && isIdle) { // persistence and token
         console.log('default');
         content = <Outlet />
     }

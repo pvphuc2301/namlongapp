@@ -114,9 +114,9 @@ const App = () => {
     <Provider store={store}>
       <Suspense fallback={<Spin />}>
         <Routes>
-          <Route path='/' element={<SharedLayout />}>
-            <Route element={<PersistLogin />}>
-              <Route path='/' element={<Home />} />
+          <Route element={<SharedLayout />}>
+            <Route path='/' element={<PersistLogin />}>
+              <Route index element={<Home />} />
               <Route path='/cart' element={<Cart />} />
               <Route path='/sold-cart' element={<SoldCart />} />
               <Route path='/my-cart' element={<MyCart />} />
