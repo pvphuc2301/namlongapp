@@ -31,9 +31,9 @@ export const selectCurrentUser = (state) => {
 
     const decoded = JSON.parse(atob(token.split('.')[1]));
 
-    const { id, username, email, role } = decoded.UserInfo;
+    const { id, username, email, role, photo } = decoded.UserInfo;
 
-    return { id, username, email, role };
+    return { id, username, email, role, photo };
 }
 
 export const selectCurrentToken = (state) => state.auth.token;

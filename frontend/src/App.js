@@ -67,7 +67,7 @@ const SharedLayout = () => {
       <Navbar />
       <Content style={{ margin: '0 16px' }}>
         <Layout>
-          <Sider>
+          <Sider width={230} style={{ minHeight: 'calc(100vh - 132px' }}>
             <Menu style={{ height: '100%' }} defaultSelectedKeys={['1']} mode="inline" items={items} />
           </Sider>
           <Content style={{ padding: '0 24px', minHeight: 280 }}>

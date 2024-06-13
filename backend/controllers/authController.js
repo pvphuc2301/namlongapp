@@ -14,7 +14,8 @@ const signToken = user => {
                 id: user._id,
                 username: user.name,
                 email: user.email,
-                role: user.role
+                role: user.role,
+                photo: user.photo
             }
         },
         process.env.ACCESS_TOKEN_SECRET,

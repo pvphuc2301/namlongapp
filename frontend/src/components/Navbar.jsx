@@ -1,15 +1,43 @@
 import { Transition } from "@headlessui/react";
-import { Button } from "antd";
+import { Button, Flex, Tag } from "antd";
 import { memo, useEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
+import logoNamlong from "../logo-nlg.jpg";
 import { useAuth0 } from "@auth0/auth0-react";
+import { selectCurrentUser } from "../redux/slices/authSlice";
 
 const Header = styled.header`
   display: flex;
   align-items: center;
+  background-color: #910d10;
   /* justify-content: space-between; */
+`;
+
+const Avatar = styled.img`
+    height: 34px;
+    border-radius: 50%;
+    border: 2px solid #fff;
+`;
+
+const LogoWrapper = styled.div`
+    background-color: #fff;
+
+    & img {
+        height: 57px;
+        margin: 0 16px;
+    }
+`;
+
+const StyledLink = styled(Link)`
+    color: #fff;
+    text-decoration: none;
+
+    &:hover {
+        color: #fff;
+        background-color: blue;
+    }
 `;
 
 const Navbar = () => {
@@ -17,7 +45,9 @@ const Navbar = () => {
 
     const dropdownRef = useRef(null);
 
-    const { userInfo } = useSelector((state) => state.auth);
+    const userInfo = useSelector(selectCurrentUser);
+
+    console.log(userInfo);
 
     console.log(showDropdown);
 
@@ -38,20 +68,16 @@ const Navbar = () => {
 
     return (
         <Header>
-            <img style={{ height: 32, margin: 16 }} src="https://gw.alipayobjects.com/zos/rmsportal/KDpgvguMpGfqaHPjicRK.svg" alt="logo" />
-            <div style={{ display: 'inline-block' }}>Nam Long Group</div>
-            <div>
-            </div>
+            <LogoWrapper><img src={logoNamlong} alt="logo" /></LogoWrapper>
+            <div style={{ flex: 1 }} />
 
-            <div style={{ flexGrow: 1, textAlign: 'right', position: 'relative' }}>
-                <i className="bi bi-bell-fill"></i>
-                <Link to={'/me'}>
-                    {
-                        userInfo?.user?.photo
-                            ? <img style={{ height: 20, borderRadius: '50%' }} src={`/img/users/${userInfo?.user?.photo}`} />
-                            : <i className="bi bi-person-fill"></i>
-                    }
-                </Link>
+            <div style={{ textAlign: 'right', position: 'relative', backgroundColor: '#910d10', marginRight: 16 }}>
+                <StyledLink to={'/me'}>
+                    <Flex gap={8} align="center">
+                        <Avatar src={`/img/users/${userInfo?.photo ?? 'default.jpeg'}`} alt={userInfo?.name}></Avatar>
+                        <div>{userInfo?.email}</div>
+                    </Flex>
+                </StyledLink>
                 {/* <Button type='button' onClick={() => setShowDropdown(!showDropdown)}>
                     <img style={{ height: 20, borderRadius: '50%' }} src={`/img/users/${userInfo?.user?.photo}`} />
                 </Button> */}
@@ -61,8 +87,8 @@ const Navbar = () => {
                         >
                             <div>
                                 <img style={{ height: 32, margin: 16 }} alt="logo" />
-                                <strong>{userInfo?.user?.name}</strong>
-                                <div>{userInfo?.user?.email}</div>
+                                <strong>{userInfo?.name}</strong>
+                                <div>{userInfo?.email}</div>
                                 <Button type='button'>Đăng xuất</Button>
                             </div>
                         </div>
