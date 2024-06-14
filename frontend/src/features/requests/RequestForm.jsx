@@ -1,7 +1,7 @@
 import { App, Button, Form, Input, Select } from "antd";
 import useCreateRequest from './useCreateRequest';
 
-const RequestForm = ({ formInstance = {} }) => {
+const RequestForm = ({ formInstance = {}, onclose }) => {
     const { message } = App.useApp();
     const [form] = Form.useForm();
 
@@ -23,7 +23,10 @@ const RequestForm = ({ formInstance = {} }) => {
             createRequest(
                 data,
                 {
-                    onSuccess: () => message.success('Create successfully!'),
+                    onSuccess: () => {
+                        message.success('Create successfully!');
+                        onclose?.();
+                    },
                     onError: () => message.error('Create failed!'),
                 });
         }

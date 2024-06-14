@@ -60,7 +60,6 @@ const DocumentTypeTable = () => {
             dataIndex: 'action',
             fixed: 'right',
             render: (_, record) => {
-
                 return (
                     <PermissionsGate roles={[ROLES.ADMIN]}>
                         <Button type="link" onClick={() => {

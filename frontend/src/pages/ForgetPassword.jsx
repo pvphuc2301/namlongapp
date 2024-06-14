@@ -1,6 +1,8 @@
 import { Button, Form, Input, Result } from "antd";
 import useForgetPassword from "../features/auth/useForgetPassword";
 import { Link } from "react-router-dom";
+import logoNamlong from "../logo-nlg.jpg";
+
 
 const ForgetPassword = () => {
 
@@ -46,6 +48,10 @@ const ForgetPassword = () => {
             <Form
                 style={{ width: 400, padding: 20, background: "white" }}
                 onFinish={handleSubmit}>
+
+                <div style={{ textAlign: "center" }}>
+                    <img src={logoNamlong} style={{ width: 200 }} alt="logo" />
+                </div>
 
                 <h3>Forget Password</h3>
 

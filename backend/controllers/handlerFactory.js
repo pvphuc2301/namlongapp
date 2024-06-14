@@ -20,9 +20,6 @@ exports.deleteOne = (Model) => catchAsync(async (req, res, next) => {
 });
 
 exports.updateOne = (Model, useNext) => catchAsync(async (req, res, next) => {
-    req.body.updatedBy = req.user._id;
-    req.body.updatedAt = Date.now();
-
     const doc = await Model.findByIdAndUpdate(req.params.id, req.body, {
         new: true, // return updated document
         runValidators: true // validate before update
@@ -46,8 +43,6 @@ exports.updateOne = (Model, useNext) => catchAsync(async (req, res, next) => {
 });
 
 exports.createOne = (Model) => catchAsync(async (req, res, next) => {
-
-    console.log('body', req.body);
     req.body.createdBy = req.user._id;
 
     const doc = await Model.create(req.body);

@@ -20,6 +20,14 @@ router
             req.body.status = 'pending';
         }
 
+        // for renewal
+        if (req.body.status === 'archived') {
+            req.body.status = 'pending';
+
+            req.body.createdBy = req.user._id;
+            req.body.createdAt = Date.now();
+        }
+
         next();
     }, cartItemController.updateCartItem)
     .delete(cartItemController.deleteCartItem);

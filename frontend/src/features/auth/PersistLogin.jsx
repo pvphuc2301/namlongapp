@@ -16,14 +16,13 @@ const PersistLogin = () => {
     const { refresh, isLoading, isSuccess, isError, error, isIdle } = useRefresh();
 
     useEffect(() => {
-        if (effectRan.current === true || process.env.NODE_ENV !== 'production') {
+        // if (effectRan.current === true || process.env.NODE_ENV !== 'production') {
 
-        }
+        // }
 
-        console.log('persisted token', persistedToken);
-        console.log('token', token);
+        // console.log('persisted token', persistedToken);
+        // console.log('token', token);
         if (!token && persistedToken) {
-            console.log('refresh token');
             refresh(
                 undefined,
                 {
@@ -40,24 +39,24 @@ const PersistLogin = () => {
     let content
 
     if (!persistedToken) { // no persistence
-        console.log('no persistence');
+        // console.log('no persistence');
         content = <Outlet />
     } else if (isLoading) { // persistence but no token
-        console.log('loading');
+        // console.log('loading');
         content = <Spin />
     } else if (isError) { // persistence but no token
-        console.log('error');
+        // console.log('error');
         content = <Result status="error" title="Error" subTitle={error.message} extra={[<Link to="/login">Login</Link>]} />
         // content = <p>{`${error.message} `} <Link to="/login">Login</Link></p>
     } else if (isSuccess && trueSuccess) { // persistence and token
-        console.log('success');
+        // console.log('success');
         content = <Outlet />
     } else if (token && isIdle) { // persistence and token
-        console.log('default');
+        // console.log('default');
         content = <Outlet />
     }
 
-    console.log('content', content);
+    // console.log('content', content);
 
     return content
 }

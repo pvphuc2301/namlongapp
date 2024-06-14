@@ -6,6 +6,7 @@
   "name": "namlong",
   "version": "1.0.0",
   "main": "server.js",
+  "proxy": "http://127.0.0.1:5000",
   "dependencies": {
     "@auth0/auth0-react": "^2.2.4",
     "ansi-regex": "^5.0.1",

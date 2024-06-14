@@ -1,9 +1,8 @@
-import { Alert, Button, Checkbox, Form, Input, Spin } from "antd";
-import { useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { useLocation, useNavigate } from "react-router-dom";
+import { Alert, Button, Form, Input, Result, Spin } from "antd";
+import { useDispatch } from "react-redux";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import useSignUp from "../features/auth/useSignUp";
-import { setCredentials } from "../redux/slices/authSlice";
+import logoNamlong from "../logo-nlg.jpg";
 
 const SignUp = () => {
 
@@ -14,7 +13,7 @@ const SignUp = () => {
 
     const dispatch = useDispatch();
     const navigate = useNavigate();
-    const { isSigningUp, signUp, error, isError } = useSignUp();
+    const { isSigningUp, signUp, error, isError, isSuccess } = useSignUp();
 
     // useEffect(() => {
     //     if (userInfo) {
@@ -22,23 +21,22 @@ const SignUp = () => {
     //     }
     // }, [redirect, navigate, userInfo]);
 
+    // if (isError) {
+    //     return <Result status="error" title="Error" subTitle={error?.data?.message} />
+    // }
+
+    console.log(error);
+
+    if (isSuccess) {
+        return <Result status="success" title="Success" subTitle="Your account has been created! Please login." extra={<Link to="/login">Login</Link>} />
+    }
+
     const onFinish = (values) => {
-        try {
-            signUp(values, {
-                onSuccess: ({ data }) => {
-                    // console.log(data.data);
-                    // dispatch(setCredentials({ ...data.data }));
-                    // navigate(redirect);
-                }
-            });
-        } catch (error) {
-            alert(error?.data?.message);
-        }
+        signUp(values);
     };
 
     return (
         <div style={{ height: "100vh", display: "flex", justifyContent: "center", alignItems: "center", background: "#f5f5f5" }}>
-
             <Form
                 style={{ width: 400, padding: 20, background: "white" }}
                 name="normal_login"
@@ -48,8 +46,11 @@ const SignUp = () => {
                 }}
                 onFinish={onFinish}
             >
+                <div style={{ textAlign: "center" }}>
+                    <img src={logoNamlong} style={{ width: 200 }} alt="logo" />
+                </div>
                 {
-                    isError && error?.data?.message && <Alert message={error?.data?.message} type="info" showIcon />
+                    isError && error?.response?.data?.message && <Alert message={error?.response?.data?.message} type="error" showIcon style={{ marginBottom: 10 }} />
                 }
                 <Form.Item
                     name="username"
@@ -71,6 +72,7 @@ const SignUp = () => {
                             required: true,
                             message: 'Please input your email!',
                         },
+                        { type: "email", message: "Please input a valid email!" },
                     ]}
                 >
                     <Input
@@ -83,6 +85,10 @@ const SignUp = () => {
                         {
                             required: true,
                             message: 'Please input your Password!',
+                        },
+                        {
+                            min: 8,
+                            message: 'Password must be at least 8 characters',
                         },
                     ]}
                 >
@@ -99,6 +105,14 @@ const SignUp = () => {
                             required: true,
                             message: 'Please input your Password Confirm!',
                         },
+                        ({ getFieldValue }) => ({
+                            validator(_, value) {
+                                if (!value || getFieldValue('password') === value) {
+                                    return Promise.resolve();
+                                }
+                                return Promise.reject(new Error('The two passwords that you entered do not match!'));
+                            },
+                        }),
                     ]}
                 >
                     <Input
@@ -108,11 +122,12 @@ const SignUp = () => {
                     />
                 </Form.Item>
                 <Form.Item>
-                    <Button type="primary" htmlType="submit" className="login-form-button">
+                    <Button style={{ width: "100%" }} loading={isSigningUp} type="primary" htmlType="submit" className="login-form-button">
                         {isSigningUp && <Spin size="small" />}
                         Sign Up
                     </Button>
                 </Form.Item>
+                <Link to="/login">Already have an account? Sign In</Link>
             </Form>
         </div>
     )

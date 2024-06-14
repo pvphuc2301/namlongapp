@@ -3,9 +3,6 @@ const CartItem = require('../models/cartItemModel');
 const catchAsync = require('../utils/catchAsync');
 const Project = require('../models/projectModel');
 
-exports.getApartmentCode = (req, res, next) => {
-}
-
 exports.generateApartmentCode = catchAsync(async (req, _, next) => {
     if ((!req.body.sub && !req.body.block) || !Number(req.body.floor) || !Number(req.body.position)) {
         return next();
@@ -48,8 +45,7 @@ exports.generateApartmentCode = catchAsync(async (req, _, next) => {
     req.body.apartmentCode = `${blockStr}-${floorStr}.${positionStr}`;
 
     next();
-})
-
+});
 exports.getAllCartItems = factory.getAll(CartItem);
 exports.getCartItem = factory.getOne(CartItem);
 exports.createCartItem = factory.createOne(CartItem);

@@ -1,21 +1,18 @@
-import { App, Button, Form, Input, InputNumber, Select, Skeleton, message } from "antd";
+import { Alert, App, Button, Form, InputNumber, Select, Skeleton } from "antd";
+import { ROLES } from "../../config/roles";
 import useProjects from "../projects/useProjects";
+import useUsers from "../users/useUsers";
 import useCreateCartItem from "./useCreateCartItem";
 import useUpdateCartItem from "./useUpdateCartItem";
-import useUsers from "../users/useUsers";
-import { useEffect } from "react";
-import { useSelector } from "react-redux";
 
-const CartForm = ({ formData = {} }) => {
+const CartForm = ({ formData = {}, onClose }) => {
     const { message } = App.useApp();
 
     const [form] = Form.useForm();
 
     const { isLoadingUsers, users } = useUsers({
-        selector: (users) => users.filter(user => user.role === 'user')
+        selector: (users) => users.filter(user => user.role === ROLES.SALE)
     });
-
-    console.log(formData);
 
     const { isLoadingProjects, projects } = useProjects();
     const { isCreating, createCartItem } = useCreateCartItem();
@@ -30,14 +27,13 @@ const CartForm = ({ formData = {} }) => {
     if (isLoading) return <Skeleton />
 
     const onFinish = (values) => {
-
         if (formData.type === 'create') {
             createCartItem(
                 values,
                 {
                     onSuccess: () => {
                         message.success('Create successfully!');
-                        // form.resetFields();
+                        onClose?.();
                     },
                     onError: () => {
                         message.error('Create failed!');
@@ -46,12 +42,17 @@ const CartForm = ({ formData = {} }) => {
         }
 
         if (formData.type === 'update') {
+
+            if (formData.data.status === 'archived') {
+                values.status = 'archived';
+            }
+
             updateCartItem(
                 { id: formData.data._id, data: values },
                 {
                     onSuccess: () => {
                         message.success('Update successfully!');
-                        // form.resetFields();
+                        onClose?.();
                     },
                     onError: () => {
                         message.error('Update failed!');
@@ -93,6 +94,8 @@ const CartForm = ({ formData = {} }) => {
                 <Input />
             </Form.Item> */}
 
+            <Alert message="Tầng 12a nhập 13, tầng 12b nhập 14, nhà thấp tầng nhập 0" type="info" showIcon />
+
             <Form.Item
                 name='floor'
                 label="Tầng"
@@ -130,7 +133,7 @@ const CartForm = ({ formData = {} }) => {
 
             <Form.Item
                 name='originalPrice'
-                label="Giá"
+                label="Giá gốc"
                 rules={[{ required: true, message: 'Please input price!' }]}
             >
                 <InputNumber

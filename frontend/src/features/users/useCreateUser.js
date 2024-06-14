@@ -6,7 +6,7 @@ function useCreateUser() {
     const axiosPrivate = useAxiosPrivate();
 
     const { isPending: isCreating, mutate: createUser } = useMutation({
-        mutationFn: (data) => axiosPrivate.post('/api/v1/users/signup',
+        mutationFn: (data) => axiosPrivate.post('/api/v1/auth/signup',
             data,
             {
                 headers: {

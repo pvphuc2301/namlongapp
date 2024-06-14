@@ -23,6 +23,8 @@ const Avatar = styled.img`
 
 const LogoWrapper = styled.div`
     background-color: #fff;
+    width: 229px;
+    text-align: center;
 
     & img {
         height: 57px;

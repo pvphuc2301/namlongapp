@@ -1,9 +1,10 @@
-import { Alert, App, Button, Checkbox, Form, Input } from "antd";
+import { Alert, App, Button, Checkbox, Flex, Form, Input } from "antd";
 import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import useLogin from "../features/auth/useLogin";
 import { selectCurrentToken, setCredentials } from "../redux/slices/authSlice";
+import logoNamlong from "../logo-nlg.jpg";
 
 const Login = () => {
     const { message } = App.useApp();
@@ -68,6 +69,10 @@ const Login = () => {
                 layout="vertical"
                 onFinish={onFinish}
             >
+                <div style={{ textAlign: "center" }}>
+                    <img src={logoNamlong} style={{ width: 200 }} alt="logo" />
+                </div>
+
                 {errMsg && <Alert message={errMsg} type="error" showIcon ref={errRef} style={{ marginBottom: 10 }} />}
                 <Form.Item
                     label="Email"
@@ -110,9 +115,14 @@ const Login = () => {
                 <Button style={{ width: "100%" }} loading={isSigningIn} type="primary" htmlType="submit">
                     Log In
                 </Button>
+
                 <Form.Item>
                     Or <Link to={"/signup"}>Register Now!</Link>
                 </Form.Item>
+
+                <Flex justify="center">
+                    <Button type="link" onClick={() => onFinish({ email: "sale.demo@gmail.com", password: "12345678" })}>Sign in as demo user</Button>
+                </Flex>
             </Form>
         </div>
     )

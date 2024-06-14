@@ -7,26 +7,20 @@ module.exports = class Email {
         this.to = user.email;
         this.firstName = user.name.split(' ')[0];
         this.url = url;
-        this.from = `Nodemailer <${process.env.EMAIL_FROM}>`;
+        this.from = `Namlong <${process.env.EMAIL_FROM}>`;
     }
 
     createTransport() {
-        if (process.env.NODE_ENV === 'production') {
-            return 1;
-        }
+        // if (process.env.NODE_ENV === 'production') {
+        //     return 1;
+        // }
         // using gmail
         // create reusable transporter object using the default SMTP transport
-        // return nodemailer.createTransport({
-        //     service: 'gmail',
-        //     auth: {
-        //         user: process.env.EMAIL_USERNAME,
-        //         pass: process.env.EMAIL_PASSWORD
-        //     }
-        // });
-
         return nodemailer.createTransport({
+            service: 'gmail',
             host: process.env.EMAIL_HOST,
             port: process.env.EMAIL_PORT,
+            secure: true,
             auth: {
                 user: process.env.EMAIL_USERNAME,
                 pass: process.env.EMAIL_PASSWORD
@@ -52,7 +46,7 @@ module.exports = class Email {
 
     async sendWelcome() {
         const html = templates['welcome'](this.firstName);
-        await this.send(html, 'Welcome to the Natours Family!');
+        await this.send(html, 'Welcome to Nam Long Group!');
     }
 
     async sendPasswordReset() {

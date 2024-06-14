@@ -9,6 +9,8 @@ import CartForm from "./CartForm";
 import { useSearchParams } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { selectCurrentUser } from "../../redux/slices/authSlice";
+import useRequests from "../requests/useRequests";
+
 const MyCartTable = () => {
     const userInfo = useSelector(selectCurrentUser);
 
@@ -17,6 +19,7 @@ const MyCartTable = () => {
     const [formData, setFormData] = useState({});
     const [modal, contextHolder] = Modal.useModal();
     const [selectedIds, setSelectedIds] = useState([]);
+    const { isLoadingRequests, requests } = useRequests();
 
     const { isLoadingCartItems, cartItems } = useCartItems({
         params: `sale=${userInfo?.id}`,
@@ -111,7 +114,6 @@ const MyCartTable = () => {
             },
             sorter: 'diff',
             render: (text) => <div style={{ width: 'max-content', minWidth: '110px', textAlign: 'right' }}>{currencyFormat(text)}</div>,
-
         },
         {
             title: 'Diện tích',
@@ -123,7 +125,6 @@ const MyCartTable = () => {
             },
             sorter: 'area',
             render: (text) => <div style={{ width: 'max-content', minWidth: '110px', textAlign: 'right' }}>{text} m²</div>,
-
         },
         {
             title: 'Status',
@@ -134,14 +135,16 @@ const MyCartTable = () => {
                 condition: conditionType.equal
             },
             render: (text) => {
-                // 0: pending 
-                // 1: approved 
-                // 2: rejected
-                // 3: archived
+                const map = {
+                    'pending': 'orange',
+                    'approved': 'green',
+                    'rejected': 'red',
+                    'archived': 'default',
+                    'deleted': 'red',
+                    'processing': 'orange'
+                }
 
-                const color = text === 'pending' ? 'orange' : text === 'approved' ? 'green' : 'red'
-
-                return <Tag color={color}>{text}</Tag>
+                return <Tag color={map[text]}>{text}</Tag>
             }
         },
         {
@@ -149,16 +152,36 @@ const MyCartTable = () => {
             dataIndex: 'action',
             fixed: 'right',
             render: (_, record) => {
+                let request = [];
+
+                if (record.status === 'approved') {
+                    request = requests?.filter(request => request.cartItem._id === record._id).sort((a, b) => a.createdAt - b.createdAt);
+                }
+
+                const isPendingRequest = request?.length > 0 && request[0]?.status === 'pending';
+
+                if (record.status === 'archived') return (
+                    <Button type="link" onClick={() => { setFormData({ data: record, type: 'update', name: 'cart' }); setOpen(true) }}>Renew</Button>
+                )
+
                 return (
-                    <Flex>
-                        <Button type="link" onClick={() => { setFormData({ data: record, type: 'update' }); setOpen(true) }}>Edit</Button>
-                    </Flex>
+                    <>
+                        <Flex>
+                            <Button type="link" onClick={() => { setFormData({ data: record, type: 'update' }); setOpen(true) }}>Edit</Button>
+                            {
+                                (record.status === 'approved' && !isPendingRequest) &&
+                                <Button type='link' onClick={() => { setFormData({ data: record, type: 'create', name: 'request' }); setOpen(true) }}  >
+                                    Request
+                                </Button>
+                            }
+                        </Flex>
+                    </>
                 )
             }
         }
     ]
 
-    const isLoading = isLoadingCartItems;
+    const isLoading = isLoadingCartItems || isLoadingRequests;
 
     if (isLoading) return <Skeleton />
 
@@ -166,66 +189,14 @@ const MyCartTable = () => {
         <Space direction="vertical" size={16}>
             {/* <SearchTable columns={columns.filter(col => !['status', 'state'].includes(col.dataIndex))} /> */}
             <Card>
-                <Flex gap={4} justify="end">
-                    {/* <PermissionsGate scopes={[SCOPES.ARTICLE_CREATE]}>
-                                <Modal.Open opens={SCOPES.ARTICLE_CREATE}>
-                                </Modal.Open>
-                            </PermissionsGate> */}
+                <Flex gap={4} justify="end" style={{ marginBottom: 16 }}>
                     <Button type="primary" onClick={() => {
                         setFormData({ type: 'create' });
                         setOpen(true)
                     }}>Add New</Button>
                 </Flex>
 
-                <Tabs defaultActiveKey="0" items={[
-                    {
-                        key: '0',
-                        label: 'All',
-                    }
-                ]}
-                    onChange={(key) => {
-                        switch (key) {
-                            case '0':
-                                searchParams.delete('status');
-                                searchParams.delete('state');
-
-                                break;
-                            case '1':
-                                searchParams.set('status', 1);
-                                searchParams.set('state', 0);
-
-                                break;
-                            case '2':
-                                // Chờ duyệt
-                                // status: 0
-                                searchParams.set('status', 0);
-                                searchParams.set('state', 0);
-
-                                break;
-                            case '3':
-                                // Hết hạn
-                                // đã duyệt (status 1) và state = 2
-                                searchParams.set('status', 1);
-                                searchParams.set('state', 2);
-                                break;
-                            case '4':
-                                // Từ chối
-                                searchParams.set('status', 2);
-                                searchParams.set('state', 0);
-                                break;
-                        }
-                        setSearchParams(searchParams);
-                    }} />
-
                 <Table dataSource={cartItems} columns={columns} pagination={false} scroll={{ x: 'max-content' }} />
-
-                {/* <TableData
-                    rowSelection={{
-                        selectedRowKeys: selectedIds,
-                        onChange: (selectedRowKeys) => setSelectedIds(selectedRowKeys),
-                    }}
-                    columns={columns.filter(column => !['status'].includes(column.dataIndex))}
-                    data={cartItems} /> */}
             </Card>
 
             <Drawer
@@ -235,7 +206,7 @@ const MyCartTable = () => {
                 onClose={() => {
                     setOpen(false)
                 }} width={500}>
-                <CartForm formData={formData} />
+                <CartForm onClose={() => setOpen(false)} formData={formData} />
             </Drawer>
 
             {contextHolder}

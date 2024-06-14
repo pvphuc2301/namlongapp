@@ -17,7 +17,6 @@ const CartTable = () => {
     const [formData, setFormData] = useState({});
     const [modal, contextHolder] = Modal.useModal();
     const { isLoadingRequests, requests } = useRequests();
-    console.log(requests);
 
     const { isLoadingCartItems, cartItems } = useCartItems({
         // params: `sale=${userInfo?.user._id}`,
@@ -161,10 +160,14 @@ const CartTable = () => {
                     request = requests?.filter(request => request.cartItem._id === record._id).sort((a, b) => a.createdAt - b.createdAt);
                 }
 
-                const isPendingRequest = request.length > 0 && request[0]?.status === 'pending';
+                const isPendingRequest = request?.length > 0 && request[0]?.status === 'pending';
+
+                if (record.status === 'archived') return (
+                    <Button type="link" onClick={() => { setFormData({ data: record, type: 'update', name: 'cart' }); setOpen(true) }}>Renew</Button>
+                )
 
                 return (
-                    <PermissionsGate owner={record?.updatedBy} roles={[ROLES.ADMIN]}>
+                    <PermissionsGate owner={record?.createdBy} roles={[ROLES.ADMIN]}>
                         <Flex>
                             <Button type="link" onClick={() => { setFormData({ data: record, type: 'update', name: 'cart' }); setOpen(true) }}>Edit</Button>
                             {
@@ -185,8 +188,8 @@ const CartTable = () => {
     if (isLoading) return <Skeleton />
 
     const renderForm = () => {
-        if (formData.name === 'cart') return <CartForm formData={formData} />
-        if (formData.name === 'request') return <RequestForm formInstance={formData} />
+        if (formData.name === 'cart') return <CartForm onClose={() => setOpen(false)} formData={formData} />
+        if (formData.name === 'request') return <RequestForm onClose={() => setOpen(false)} formInstance={formData} />
     }
 
     return (
@@ -240,7 +243,7 @@ const CartTable = () => {
                 closable
                 destroyOnClose
                 open={open}
-                title={formData.name}
+                title={formData.name?.toUpperCase()}
                 onClose={() => {
                     setOpen(false)
                 }} width={500}>
