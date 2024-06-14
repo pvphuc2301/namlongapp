@@ -57,7 +57,7 @@ const ForgetPassword = () => {
 
                 <Form.Item
                     name="email"
-                    rules={[{ required: true, message: 'Please input your email!' }]}
+                    rules={[{ required: true, message: 'Please input your email!' }, { type: 'email', message: 'Please input a valid email!' }]}
                 >
                     <Input prefix={<i className="bi bi-envelope"></i>} placeholder="Email address" />
                 </Form.Item>

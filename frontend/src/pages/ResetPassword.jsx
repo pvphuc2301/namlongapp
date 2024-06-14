@@ -1,25 +1,38 @@
 import { useParams } from "react-router-dom";
 import useResetPassword from "../features/auth/useResetPassword";
-import { Alert, Button, Form, Input } from "antd";
+import { Alert, Button, Form, Input, Result } from "antd";
 
 const ResetPassword = () => {
     const { token } = useParams();
-    const { resetPassword, isLoading, isError, error } = useResetPassword();
+    const { resetPassword, isLoading, isError, error, isSuccess } = useResetPassword();
 
     const handleSubmit = (e) => {
         const password = e.password;
         const passwordConfirm = e.passwordConfirm;
 
-        resetPassword({ token, password, passwordConfirm },
-            {
-                onSuccess: () => {
-                    console.log("success");
-                }
+        resetPassword({ token, password, passwordConfirm }, {
+            onSuccess: () => {
+                setTimeout(() => {
+                    window.location.href = '/login';
+                })
             }
-        );
+        });
     }
 
-    console.log('error', error);
+    if (isSuccess) {
+        return (
+            <Result
+                status="success"
+                title="Password Reset Successfully"
+                subTitle="Redirecting to login page..."
+                extra={[
+                    <Button type="primary" href='/login'>
+                        Login
+                    </Button>
+                ]}
+            />
+        )
+    }
 
     return (
         <div style={{ height: "100vh", display: "flex", justifyContent: "center", alignItems: "center", background: "#f5f5f5" }}>
@@ -34,7 +47,16 @@ const ResetPassword = () => {
                 <Form.Item
                     name="password"
                     label="New password"
-                    rules={[{ required: true, message: 'Please input your password!' }]}
+                    rules={[
+                        {
+                            required: true,
+                            message: 'Please input your Password!',
+                        },
+                        {
+                            min: 8,
+                            message: 'Password must be at least 8 characters',
+                        },
+                    ]}
                 >
                     <Input.Password prefix={<i className="bi bi-lock"></i>} />
                 </Form.Item>
@@ -42,7 +64,20 @@ const ResetPassword = () => {
                 <Form.Item
                     name="passwordConfirm"
                     label="Confirm new password"
-                    rules={[{ required: true, message: 'Please confirm your password!' }]}
+                    rules={[
+                        {
+                            required: true,
+                            message: 'Please input your Password Confirm!',
+                        },
+                        ({ getFieldValue }) => ({
+                            validator(_, value) {
+                                if (!value || getFieldValue('password') === value) {
+                                    return Promise.resolve();
+                                }
+                                return Promise.reject(new Error('The two passwords that you entered do not match!'));
+                            },
+                        }),
+                    ]}
                 >
                     <Input.Password prefix={<i className="bi bi-lock"></i>} />
                 </Form.Item>
